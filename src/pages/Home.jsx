@@ -9,11 +9,34 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
 
+  // ambil favorite dari localStorage
   useEffect(() => {
     const fav = JSON.parse(localStorage.getItem("fav")) || [];
     setFavorites(fav);
   }, []);
 
+  // 🔥 AUTO LOAD MOVIE (DEFAULT / RANDOM)
+  useEffect(() => {
+    const fetchDefault = async () => {
+      setLoading(true);
+
+      const keywords = ["batman", "avengers", "spiderman", "harry potter"];
+      const random =
+        keywords[Math.floor(Math.random() * keywords.length)];
+
+      const data = await searchMovies(random);
+
+      if (data.Response === "True") {
+        setMovies(data.Search);
+      }
+
+      setLoading(false);
+    };
+
+    fetchDefault();
+  }, []);
+
+  // toggle favorite
   const toggleFavorite = (movie) => {
     let updated = [...favorites];
 
@@ -29,6 +52,7 @@ function Home() {
     localStorage.setItem("fav", JSON.stringify(updated));
   };
 
+  // search manual
   const handleSearch = async () => {
     if (!query) return;
 
@@ -51,8 +75,8 @@ function Home() {
 
       {/* HEADER */}
       <div className="text-center py-10 bg-gradient-to-r from-purple-600 to-blue-500 text-white">
-        <h1 className="text-4xl font-bold">🎬 Movie App</h1>
-        <p>Cari film favorit kamu</p>
+        <h1 className="text-4xl font-bold">🎬 Popular Movies</h1>
+        <p>Film pilihan untuk kamu</p>
       </div>
 
       {/* SEARCH */}
